@@ -5,24 +5,27 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 	"time"
 
-	"github.com/alpacahq/alpaca-trade-api-go/common"
+	"github.com/gmlewis/alpaca-trade-api-go/common"
+	jsoniter "github.com/json-iterator/go"
 	try "gopkg.in/matryer/try.v1"
 )
 
 const (
-	aggURL      = "%v/v1/historic/agg/%v/%v"
-	aggv2URL    = "%v/v2/aggs/ticker/%v/range/%v/%v/%v/%v"
-	tradesURL   = "%v/v1/historic/trades/%v/%v"
-	tradesv2URL = "%v/v2/ticks/stocks/trades/%v/%v"
-	quotesURL   = "%v/v1/historic/quotes/%v/%v"
-	quotesv2URL = "%v/v2/ticks/stocks/nbbo/%v/%v"
-	exchangeURL = "%v/v1/meta/exchanges"
+	aggURL       = "%v/v1/historic/agg/%v/%v"
+	aggv2URL     = "%v/v2/aggs/ticker/%v/range/%v/%v/%v/%v"
+	tradesURL    = "%v/v1/historic/trades/%v/%v"
+	tradesv2URL  = "%v/v2/ticks/stocks/trades/%v/%v"
+	quotesURL    = "%v/v1/historic/quotes/%v/%v"
+	quotesv2URL  = "%v/v2/ticks/stocks/nbbo/%v/%v"
+	exchangeURL  = "%v/v1/meta/exchanges"
+	prevCloseURL = "%v/v2/aggs/ticker/%v/prev"
 )
 
 var (
@@ -393,6 +396,37 @@ func GetStockExchanges() ([]StockExchange, error) {
 	return DefaultClient.GetStockExchanges()
 }
 
+// GetPreviousClose requests Polygon's v2 REST API for previous day close
+// for the specified symbol.
+func (c *Client) GetPreviousClose(symbol string) (*PreviousCloseV2, error) {
+	u, err := url.Parse(fmt.Sprintf(prevCloseURL, base, symbol))
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+	q.Set("apiKey", c.credentials.PolygonKeyID)
+
+	u.RawQuery = q.Encode()
+
+	resp, err := get(u)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode >= http.StatusMultipleChoices {
+		return nil, fmt.Errorf("status code %v", resp.StatusCode)
+	}
+
+	agg := &PreviousCloseV2{}
+
+	if err = unmarshal(resp, agg); err != nil {
+		return nil, err
+	}
+
+	return agg, nil
+}
+
 func unmarshal(resp *http.Response, data interface{}) error {
 	defer resp.Body.Close()
 
@@ -401,7 +435,12 @@ func unmarshal(resp *http.Response, data interface{}) error {
 		return err
 	}
 
-	return json.Unmarshal(body, data)
+	// I've noticed that the Go struct definitions are always consistent
+	// with the actual JSON response received, and data is sometimes lost.
+	// Printing the actual response helps to find the mismatches.
+	log.Printf("body:%s", body)
+
+	return jsoniter.Unmarshal(body, data)
 }
 
 func verify(resp *http.Response) (err error) {
@@ -413,11 +452,16 @@ func verify(resp *http.Response) (err error) {
 		if err != nil {
 			return err
 		}
-		fmt.Println(string(body))
+		// fmt.Println(string(body))  // Moved below.
 
 		apiErr := APIError{}
 
-		err = json.Unmarshal(body, &apiErr)
+		// I've noticed that the Go struct definitions are always consistent
+		// with the actual JSON response received, and data is sometimes lost.
+		// Printing the actual response helps to find the mismatches.
+		log.Printf("body:%s", body)
+
+		err = jsoniter.Unmarshal(body, &apiErr)
 		if err == nil {
 			err = &apiErr
 		}

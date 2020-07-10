@@ -1,18 +1,19 @@
-
 # alpaca-trade-api-go
 
-[![CircleCI Status](https://circleci.com/gh/alpacahq/alpaca-trade-api-go.svg?style=svg)](https://circleci.com/gh/alpacahq/alpaca-trade-api-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/alpacahq/alpaca-trade-api-go)](https://goreportcard.com/report/github.com/alpacahq/alpaca-trade-api-go)
+This fork is based on github.com/alpacahq/alpaca-trade-api-go.
+It adds some examples in the cmd directory on how to call the APIs
+and I will also be working on adding and updating missing or
+out-of-date structs as I discover them.
 
 `alpaca-trade-api-go` is a Go library for the Alpaca trade API. It allows rapid trading algo development easily, with support for the both REST and streaming interfaces. For details of each API behavior, please see the online API document.
 
 ## Installation
 
 ```
-$ go get github.com/alpacahq/alpaca-trade-api-go/common
-$ go get github.com/alpacahq/alpaca-trade-api-go/polygon
-$ go get github.com/alpacahq/alpaca-trade-api-go/stream
-$ go get github.com/alpacahq/alpaca-trade-api-go/alpaca
+$ go get github.com/gmlewis/alpaca-trade-api-go/common
+$ go get github.com/gmlewis/alpaca-trade-api-go/polygon
+$ go get github.com/gmlewis/alpaca-trade-api-go/stream
+$ go get github.com/gmlewis/alpaca-trade-api-go/alpaca
 ```
 
 ## Example
@@ -26,8 +27,8 @@ import (
     "os"
     "fmt"
 
-    "github.com/alpacahq/alpaca-trade-api-go/alpaca"
-    "github.com/alpacahq/alpaca-trade-api-go/common"
+    "github.com/gmlewis/alpaca-trade-api-go/alpaca"
+    "github.com/gmlewis/alpaca-trade-api-go/common"
 )
 
 func init() {
@@ -62,9 +63,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/alpacahq/alpaca-trade-api-go/alpaca"
-	"github.com/alpacahq/alpaca-trade-api-go/common"
-	"github.com/alpacahq/alpaca-trade-api-go/stream"
+	"github.com/gmlewis/alpaca-trade-api-go/alpaca"
+	"github.com/gmlewis/alpaca-trade-api-go/common"
+	"github.com/gmlewis/alpaca-trade-api-go/stream"
 )
 
 func main() {
@@ -119,4 +120,4 @@ You can also instead use the function `alpaca.SetBaseUrl("https://paper-api.alpa
 
 ## GoDoc
 
-For a more in-depth look at the SDK, see the [GoDoc](https://godoc.org/github.com/alpacahq/alpaca-trade-api-go)
+For a more in-depth look at the SDK, see the [GoDoc](https://godoc.org/github.com/gmlewis/alpaca-trade-api-go)

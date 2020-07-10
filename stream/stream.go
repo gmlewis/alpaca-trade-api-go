@@ -5,8 +5,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/alpacahq/alpaca-trade-api-go/alpaca"
-	"github.com/alpacahq/alpaca-trade-api-go/polygon"
+	"github.com/gmlewis/alpaca-trade-api-go/alpaca"
+	"github.com/gmlewis/alpaca-trade-api-go/polygon"
 )
 
 var (

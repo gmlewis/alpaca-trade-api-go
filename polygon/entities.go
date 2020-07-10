@@ -267,7 +267,7 @@ type StreamAggregate struct {
 	EndTimestamp      int64   `json:"e"`
 }
 
-// Exchange defines the Stocks / Equities "Exchange" endpoint response
+// Exchange defines the Stocks / Equities "Exchange" endpoint response.
 type StockExchange struct {
 	Id     int64  `json:"id"`
 	Type   string `json:"type"`
@@ -275,4 +275,27 @@ type StockExchange struct {
 	Mic    string `json:"mic"`
 	Name   string `json:"name"`
 	Tape   string `json:"tape"`
+}
+
+// PreviousCloseV2 is the structure that defines
+// aggregate data served through Polygon's v2 REST API.
+type PreviousCloseV2 struct {
+	Symbol       string      `json:"ticker"`
+	Status       string      `json:"status"`
+	Adjusted     bool        `json:"adjusted"`
+	QueryCount   int         `json:"queryCount"`
+	ResultsCount int         `json:"resultsCount"`
+	Ticks        []AggTickV2 `json:"results"`
+}
+
+// AggTickV2 represents aggregate using the Polygon v2 API.
+type AggTickV2 struct {
+	Symbol         string  `json:"T"` // Ticker symbol
+	Volume         float64 `json:"v"`
+	VWAP           float64 `json:"vw"`
+	Open           float64 `json:"o"`
+	Close          float64 `json:"c"`
+	High           float64 `json:"h"`
+	Low            float64 `json:"l"`
+	StartTimestamp int64   `json:"t"` // Unix milliseconds since epoch - Start of Aggregate window.
 }

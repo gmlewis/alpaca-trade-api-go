@@ -2,9 +2,9 @@ package alpaca
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -12,7 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/alpacahq/alpaca-trade-api-go/common"
+	"github.com/gmlewis/alpaca-trade-api-go/common"
+	jsoniter "github.com/json-iterator/go"
 )
 
 var (
@@ -827,7 +828,7 @@ func (c *Client) get(u *url.URL) (*http.Response, error) {
 }
 
 func (c *Client) post(u *url.URL, data interface{}) (*http.Response, error) {
-	buf, err := json.Marshal(data)
+	buf, err := jsoniter.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
@@ -841,7 +842,7 @@ func (c *Client) post(u *url.URL, data interface{}) (*http.Response, error) {
 }
 
 func (c *Client) patch(u *url.URL, data interface{}) (*http.Response, error) {
-	buf, err := json.Marshal(data)
+	buf, err := jsoniter.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
@@ -879,7 +880,12 @@ func verify(resp *http.Response) (err error) {
 
 		apiErr := APIError{}
 
-		err = json.Unmarshal(body, &apiErr)
+		// I've noticed that the Go struct definitions are always consistent
+		// with the actual JSON response received, and data is sometimes lost.
+		// Printing the actual response helps to find the mismatches.
+		log.Printf("body:%s", body)
+
+		err = jsoniter.Unmarshal(body, &apiErr)
 		if err == nil {
 			err = &apiErr
 		}
@@ -896,5 +902,10 @@ func unmarshal(resp *http.Response, data interface{}) error {
 		return err
 	}
 
-	return json.Unmarshal(body, data)
+	// I've noticed that the Go struct definitions are always consistent
+	// with the actual JSON response received, and data is sometimes lost.
+	// Printing the actual response helps to find the mismatches.
+	log.Printf("body:%s", body)
+
+	return jsoniter.Unmarshal(body, data)
 }
