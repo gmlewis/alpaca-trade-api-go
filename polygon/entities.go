@@ -299,3 +299,22 @@ type AggTickV2 struct {
 	Low            float64 `json:"l"`
 	StartTimestamp int64   `json:"t"` // Unix milliseconds since epoch - Start of Aggregate window.
 }
+
+// Snapshot is the response from the GetSnapshot endpoint using the Polygon v2 API.
+type Snapshot struct {
+	Status string         `json:"status"`
+	Ticker TickerSnapshot `json:"ticker"`
+}
+
+// TickerSnapshot represents the snapshot for a single symbol using the Polygon v2 API.
+type TickerSnapshot struct {
+	Symbol              string          `json:"ticker"`
+	TodaysChange        float64         `json:"todaysChange"`
+	TodaysChangePercent float64         `json:"todaysChangePerc"`
+	Day                 AggTickV2       `json:"day"`
+	LastQuote           QuoteTickV2     `json:"lastQuote"`
+	LastTrade           TradeTickV2     `json:"lastTrade"`
+	Min                 StreamAggregate `json:"min"`
+	PrevDay             AggTickV2       `json:"prevDay"`
+	UpdatedNS           int64           `json:"updated"` // Unix nanoseconds since epoch
+}

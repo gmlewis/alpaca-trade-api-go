@@ -26,6 +26,7 @@ const (
 	quotesv2URL  = "%v/v2/ticks/stocks/nbbo/%v/%v"
 	exchangeURL  = "%v/v1/meta/exchanges"
 	prevCloseURL = "%v/v2/aggs/ticker/%v/prev"
+	snapshotURL  = "%v/v2/snapshot/locale/us/markets/stocks/tickers/%v"
 )
 
 var (
@@ -419,6 +420,36 @@ func (c *Client) GetPreviousClose(symbol string) (*PreviousCloseV2, error) {
 	}
 
 	agg := &PreviousCloseV2{}
+
+	if err = unmarshal(resp, agg); err != nil {
+		return nil, err
+	}
+
+	return agg, nil
+}
+
+// GetSnapshot returns the current snapshot of a single ticker.
+func (c *Client) GetSnapshot(symbol string) (*Snapshot, error) {
+	u, err := url.Parse(fmt.Sprintf(snapshotURL, base, symbol))
+	if err != nil {
+		return nil, err
+	}
+
+	q := u.Query()
+	q.Set("apiKey", c.credentials.PolygonKeyID)
+
+	u.RawQuery = q.Encode()
+
+	resp, err := get(u)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode >= http.StatusMultipleChoices {
+		return nil, fmt.Errorf("status code %v", resp.StatusCode)
+	}
+
+	agg := &Snapshot{}
 
 	if err = unmarshal(resp, agg); err != nil {
 		return nil, err
