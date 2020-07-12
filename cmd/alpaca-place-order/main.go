@@ -8,6 +8,7 @@ import (
 
 	"github.com/gmlewis/alpaca-trade-api-go/alpaca"
 	"github.com/gmlewis/alpaca-trade-api-go/client"
+	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/shopspring/decimal"
 )
@@ -91,14 +92,14 @@ func main() {
 
 	req := alpaca.PlaceOrderRequest{
 		// AccountID:     0, // string
-		AssetKey:    symbol,
-		Qty:         decimal.NewFromFloat(*qty),
-		Side:        orderSide,
-		Type:        orderType,
-		TimeInForce: timeInForce,
-		LimitPrice:  limitPrice,
-		StopPrice:   stopPrice,
-		// ClientOrderID: 0, // string
+		AssetKey:      symbol,
+		Qty:           decimal.NewFromFloat(*qty),
+		Side:          orderSide,
+		Type:          orderType,
+		TimeInForce:   timeInForce,
+		LimitPrice:    limitPrice,
+		StopPrice:     stopPrice,
+		ClientOrderID: uuid.New().String(),
 		// OrderClass:    0, // OrderClass
 		// TakeProfit:    0, // *TakeProfit
 		// StopLoss:      0, // *StopLoss

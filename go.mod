@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927 // indirect
+	github.com/google/uuid v1.1.1
 	github.com/gorilla/websocket v1.4.0
 	github.com/json-iterator/go v1.1.10
 	github.com/kr/pretty v0.1.0 // indirect

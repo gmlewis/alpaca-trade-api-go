@@ -8,6 +8,7 @@ import (
 
 	"github.com/gmlewis/alpaca-trade-api-go/alpaca"
 	"github.com/gmlewis/alpaca-trade-api-go/client"
+	"github.com/google/uuid"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/shopspring/decimal"
 )
@@ -81,7 +82,7 @@ func main() {
 		TimeInForce:   timeInForce,
 		LimitPrice:    limitPrice,
 		StopPrice:     stopPrice,
-		ClientOrderID: *id,
+		ClientOrderID: uuid.New().String(),
 	}
 	order, err := c.ReplaceOrder(*id, req)
 	if err != nil {
