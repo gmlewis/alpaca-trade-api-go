@@ -880,7 +880,7 @@ func verify(resp *http.Response) (err error) {
 
 		apiErr := APIError{}
 
-		// I've noticed that the Go struct definitions are always consistent
+		// I've noticed that the Go struct definitions aren't always consistent
 		// with the actual JSON response received, and data is sometimes lost.
 		// Printing the actual response helps to find the mismatches.
 		log.Printf("body:%s", body)
@@ -902,7 +902,7 @@ func unmarshal(resp *http.Response, data interface{}) error {
 		return err
 	}
 
-	// I've noticed that the Go struct definitions are always consistent
+	// I've noticed that the Go struct definitions aren't always consistent
 	// with the actual JSON response received, and data is sometimes lost.
 	// Printing the actual response helps to find the mismatches.
 	log.Printf("body:%s", body)

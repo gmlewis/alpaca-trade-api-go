@@ -126,13 +126,11 @@ func (s *Stream) start() {
 					if ok {
 						msgBytes, _ := jsoniter.Marshal(msg)
 						switch msgMap["ev"] {
-						case SecondAggs:
-							fallthrough
-						case MinuteAggs:
-							var minuteAgg StreamAggregate
-							if err := jsoniter.Unmarshal(msgBytes, &minuteAgg); err == nil {
+						case SecondAggs, MinuteAggs:
+							var agg StreamAggregate
+							if err := jsoniter.Unmarshal(msgBytes, &agg); err == nil {
 								h := handler.(func(msg interface{}))
-								h(minuteAgg)
+								h(agg)
 							} else {
 								s.handleError(err)
 							}
@@ -152,9 +150,11 @@ func (s *Stream) start() {
 							} else {
 								s.handleError(err)
 							}
+						default:
+							log.Printf("WARNING: unhandled stream message: %#v", msg)
 						}
 					} else {
-
+						log.Printf("WARNING: unhandled stream message: %#v", msg)
 					}
 				}
 			} else {
