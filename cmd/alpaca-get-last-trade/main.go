@@ -1,4 +1,4 @@
-// alpaca-get-last-quote gets last quote information for the authenticated user.
+// alpaca-get-last-trade gets last trade information for the authenticated user.
 package main
 
 import (
@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	symbol = flag.String("symbol", "", "Get the last quote for this symbol")
+	symbol = flag.String("symbol", "", "Get the last trade for this symbol")
 )
 
 func main() {
@@ -27,12 +27,12 @@ func main() {
 	}
 	defer c.Close()
 
-	lastQuote, err := c.GetLastQuote(*symbol)
+	lastTrade, err := c.GetLastTrade(*symbol)
 	if err != nil {
-		log.Fatalf("GetLastQuote: %v", err)
+		log.Fatalf("GetLastTrade: %v", err)
 	}
 
-	jsonOutput(lastQuote)
+	jsonOutput(lastTrade)
 
 	log.Printf("Done.")
 }
