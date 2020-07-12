@@ -1,7 +1,6 @@
 package polygon
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/gmlewis/alpaca-trade-api-go/common"
 	"github.com/gorilla/websocket"
+	jsoniter "github.com/json-iterator/go"
 )
 
 const (
@@ -114,7 +114,7 @@ func (s *Stream) start() {
 	for {
 		if _, arrayBytes, err := s.conn.ReadMessage(); err == nil {
 			msgArray := []interface{}{}
-			if err := json.Unmarshal(arrayBytes, &msgArray); err == nil {
+			if err := jsoniter.Unmarshal(arrayBytes, &msgArray); err == nil {
 				for _, msg := range msgArray {
 					msgMap := msg.(map[string]interface{})
 					channel := fmt.Sprintf("%s.%s", msgMap["ev"], msgMap["sym"])
@@ -124,13 +124,13 @@ func (s *Stream) start() {
 						handler, ok = s.handlers.Load(fmt.Sprintf("%s.*", msgMap["ev"]))
 					}
 					if ok {
-						msgBytes, _ := json.Marshal(msg)
+						msgBytes, _ := jsoniter.Marshal(msg)
 						switch msgMap["ev"] {
 						case SecondAggs:
 							fallthrough
 						case MinuteAggs:
 							var minuteAgg StreamAggregate
-							if err := json.Unmarshal(msgBytes, &minuteAgg); err == nil {
+							if err := jsoniter.Unmarshal(msgBytes, &minuteAgg); err == nil {
 								h := handler.(func(msg interface{}))
 								h(minuteAgg)
 							} else {
@@ -138,7 +138,7 @@ func (s *Stream) start() {
 							}
 						case Quotes:
 							var quoteUpdate StreamQuote
-							if err := json.Unmarshal(msgBytes, &quoteUpdate); err == nil {
+							if err := jsoniter.Unmarshal(msgBytes, &quoteUpdate); err == nil {
 								h := handler.(func(msg interface{}))
 								h(quoteUpdate)
 							} else {
@@ -146,7 +146,7 @@ func (s *Stream) start() {
 							}
 						case Trades:
 							var tradeUpdate StreamTrade
-							if err := json.Unmarshal(msgBytes, &tradeUpdate); err == nil {
+							if err := jsoniter.Unmarshal(msgBytes, &tradeUpdate); err == nil {
 								h := handler.(func(msg interface{}))
 								h(tradeUpdate)
 							} else {

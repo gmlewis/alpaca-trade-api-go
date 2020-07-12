@@ -2,7 +2,6 @@ package alpaca
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -11,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	jsoniter "github.com/json-iterator/go"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -366,7 +366,7 @@ func (s *AlpacaTestSuite) TestAlpaca() {
 		// successful
 		do = func(c *Client, req *http.Request) (*http.Response, error) {
 			por := PlaceOrderRequest{}
-			if err := json.NewDecoder(req.Body).Decode(&por); err != nil {
+			if err := jsoniter.NewDecoder(req.Body).Decode(&por); err != nil {
 				return nil, err
 			}
 			return &http.Response{
@@ -591,7 +591,7 @@ func (s *AlpacaTestSuite) TestAlpaca() {
 	{
 		do = func(c *Client, req *http.Request) (*http.Response, error) {
 			or := CreateOrderRequest{}
-			if err := json.NewDecoder(req.Body).Decode(&or); err != nil {
+			if err := jsoniter.NewDecoder(req.Body).Decode(&or); err != nil {
 				return nil, err
 			}
 			return &http.Response{
@@ -636,6 +636,6 @@ type nopCloser struct {
 func (nopCloser) Close() error { return nil }
 
 func genBody(data interface{}) io.ReadCloser {
-	buf, _ := json.Marshal(data)
+	buf, _ := jsoniter.Marshal(data)
 	return nopCloser{bytes.NewBuffer(buf)}
 }

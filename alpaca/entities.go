@@ -377,9 +377,65 @@ type ServerMsg struct {
 	Data   interface{} `json:"data"`
 }
 
+// AccountUpdate represent an account update from the server.
+type AccountUpdate struct {
+	ID               string          `json:"id"`
+	CreatedAt        time.Time       `json:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at"`
+	DeletedAt        *time.Time      `json:"deleted_at"`
+	Status           string          `json:"status"`
+	Currency         string          `json:"currency"`
+	Cash             decimal.Decimal `json:"cash"`
+	CashWithdrawable decimal.Decimal `json:"cash_withdrawable"`
+}
+
+// TradeUpdate represents an order update from the server.
 type TradeUpdate struct {
+	// Event is one of the following common or rarer events:
+	// Common events:
+	//   "new":  Sent when an order has been routed to exchanges for execution.
+	//   "fill": Sent when your order has been completely filled.
+	//   "partial_fill": Sent when a number of shares less than the total remaining
+	//     quantity on your order has been filled.
+	//   "canceled": Sent when your requested cancelation of an order is processed.
+	//   "expired": Sent when an order has reached the end of its lifespan, as determined
+	//     by the order’s time in force value.
+	//   "done_for_day": Sent when the order is done executing for the day, and will not
+	//     receive further updates until the next trading day.
+	//   "replaced": Sent when your requested replacement of an order is processed.
+	// Rarer events:
+	//   "rejected": Sent when your order has been rejected.
+	//   "timestamp": The time at which the rejection occurred.
+	//   "pending_new": Sent when the order has been received by Alpaca and routed to
+	//     the exchanges, but has not yet been accepted for execution.
+	//   "stopped": Sent when your order has been stopped, and a trade is guaranteed for
+	//     the order, usually at a stated price or better, but has not yet occurred.
+	//   "pending_cancel": Sent when the order is awaiting cancelation. Most cancelations
+	//     will occur without the order entering this state.
+	//   "pending_replace": Sent when the order is awaiting replacement.
+	//   "calculated": Sent when the order has been completed for the day - it is either "filled"
+	//     or "done_for_day" - but remaining settlement calculations are still pending.
+	//   "suspended": Sent when the order has been suspended and is not eligible for trading.
+	//   "order_replace_rejected": Sent when the order replace has been rejected.
+	//   "order_cancel_rejected": Sent when the order cancel has been rejected.
 	Event string `json:"event"`
-	Order Order  `json:"order"`
+
+	// Timestamp is the time at which the order was filled.
+	// This field is only populated for event types of "fill", "partial_fill", "canceled", "expired",
+	// "replaced", and "rejected".
+	Timestamp time.Time `json:"timestamp"`
+
+	// Price is the average price per share at which the order was filled.
+	// This field is only populated for event types of "fill" and "partial_fill".
+	Price decimal.Decimal `json:"price"`
+
+	// PositionQty is the size of your total position, after this fill event, in shares.
+	// Positive for long positions, negative for short positions.
+	// This field is only populated for event types of "fill" and "partial_fill".
+	PositionQty decimal.Decimal `json:"position_qty"`
+
+	// Order is the order that was updated.
+	Order Order `json:"order"`
 }
 
 type StreamAgg struct {

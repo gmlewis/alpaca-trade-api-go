@@ -1,7 +1,6 @@
 package alpaca
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/url"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/gmlewis/alpaca-trade-api-go/common"
 	"github.com/gorilla/websocket"
+	jsoniter "github.com/json-iterator/go"
 )
 
 const (
@@ -43,15 +43,11 @@ type Stream struct {
 // Subscribe to the specified Alpaca stream channel.
 func (s *Stream) Subscribe(channel string, handler func(msg interface{})) (err error) {
 	switch {
-	case channel == TradeUpdates:
-		fallthrough
-	case channel == AccountUpdates:
-		fallthrough
-	case strings.HasPrefix(channel, "Q."):
-		fallthrough
-	case strings.HasPrefix(channel, "T."):
-		fallthrough
-	case strings.HasPrefix(channel, "AM."):
+	case channel == TradeUpdates,
+		channel == AccountUpdates,
+		strings.HasPrefix(channel, "Q."),
+		strings.HasPrefix(channel, "T."),
+		strings.HasPrefix(channel, "AM."):
 	default:
 		err = fmt.Errorf("invalid stream (%s)", channel)
 		return
@@ -141,23 +137,27 @@ func (s *Stream) start() {
 		if err := s.conn.ReadJSON(&msg); err == nil {
 			handler := s.findHandler(msg.Stream)
 			if handler != nil {
-				msgBytes, _ := json.Marshal(msg.Data)
+				msgBytes, _ := jsoniter.Marshal(msg.Data)
 				switch {
+				case msg.Stream == AccountUpdates:
+					var accountupdate AccountUpdate
+					jsoniter.Unmarshal(msgBytes, &accountupdate)
+					handler(accountupdate)
 				case msg.Stream == TradeUpdates:
 					var tradeupdate TradeUpdate
-					json.Unmarshal(msgBytes, &tradeupdate)
+					jsoniter.Unmarshal(msgBytes, &tradeupdate)
 					handler(tradeupdate)
 				case strings.HasPrefix(msg.Stream, "Q."):
 					var quote StreamQuote
-					json.Unmarshal(msgBytes, &quote)
+					jsoniter.Unmarshal(msgBytes, &quote)
 					handler(quote)
 				case strings.HasPrefix(msg.Stream, "T."):
 					var trade StreamTrade
-					json.Unmarshal(msgBytes, &trade)
+					jsoniter.Unmarshal(msgBytes, &trade)
 					handler(trade)
 				case strings.HasPrefix(msg.Stream, "AM."):
 					var agg StreamAgg
-					json.Unmarshal(msgBytes, &agg)
+					jsoniter.Unmarshal(msgBytes, &agg)
 					handler(agg)
 
 				default:

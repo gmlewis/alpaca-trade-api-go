@@ -2,7 +2,6 @@ package polygon
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -503,7 +502,7 @@ func verify(resp *http.Response) (err error) {
 
 // Gets data with request body marshalling
 func (c *Client) get(u *url.URL, data interface{}) (*http.Response, error) {
-	buf, err := json.Marshal(data)
+	buf, err := jsoniter.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
