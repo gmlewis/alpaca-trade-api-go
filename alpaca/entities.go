@@ -405,7 +405,6 @@ type TradeUpdate struct {
 	//   "replaced": Sent when your requested replacement of an order is processed.
 	// Rarer events:
 	//   "rejected": Sent when your order has been rejected.
-	//   "timestamp": The time at which the rejection occurred.
 	//   "pending_new": Sent when the order has been received by Alpaca and routed to
 	//     the exchanges, but has not yet been accepted for execution.
 	//   "stopped": Sent when your order has been stopped, and a trade is guaranteed for
