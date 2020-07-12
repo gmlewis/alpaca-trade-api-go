@@ -59,7 +59,7 @@ type HandlerGetter interface {
 }
 
 // AccountHandler is a handler that processes accounts.
-type AccountHandler func(account interface{})
+type AccountHandler func(account alpaca.AccountUpdate)
 
 // OrderHandler is a handler that processes orders.
 type OrderHandler func(order alpaca.TradeUpdate)

@@ -11,16 +11,16 @@ import (
 
 // NewAccountHandler creates a new account handler.
 func (c *Client) NewAccountHandler(handler api.AccountHandler) error {
-	// f := func(msg interface{}) {
-	// 	account, ok := msg.(alpaca.AccountUpdate)
-	// 	if !ok {
-	// 		log.Printf("accountHandler: unknown msg type %T = %#v", msg, msg)
-	// 		return
-	// 	}
-	// 	handler(account)
-	// }
+	f := func(msg interface{}) {
+		account, ok := msg.(alpaca.AccountUpdate)
+		if !ok {
+			log.Printf("accountHandler: unknown msg type %T = %#v", msg, msg)
+			return
+		}
+		handler(account)
+	}
 
-	if err := c.Stream.Subscribe(alpaca.AccountUpdates, handler); err != nil {
+	if err := c.Stream.Subscribe(alpaca.AccountUpdates, f); err != nil {
 		return fmt.Errorf("NewAccountHandler: %v", err)
 	}
 

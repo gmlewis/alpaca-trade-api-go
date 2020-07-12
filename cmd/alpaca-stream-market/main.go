@@ -72,7 +72,7 @@ func main() {
 	log.Printf("Done.")
 }
 
-func (s *Server) accountHandler(account interface{}) {
+func (s *Server) accountHandler(account alpaca.AccountUpdate) {
 	log.Printf("accountHandler: %#v", account)
 }
 
