@@ -1,4 +1,4 @@
-// alpaca-stream-market streams Trades, Quotes, and Minute-Bars for the named market(s).
+// alpaca-stream-market streams Trades, Quotes, and Minute-Bars for the named symbol(s).
 package main
 
 import (
@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/gmlewis/alpaca-trade-api-go/alpaca"
-	"github.com/gmlewis/alpaca-trade-api-go/polygon"
 	"github.com/gmlewis/alpaca-trade-api-go/api"
 	"github.com/gmlewis/alpaca-trade-api-go/client"
+	"github.com/gmlewis/alpaca-trade-api-go/polygon"
 )
 
 var (
