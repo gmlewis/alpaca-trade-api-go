@@ -19,6 +19,8 @@ const (
 	SecondAggs = "A"
 	Trades     = "T"
 	Quotes     = "Q"
+	Status     = "status"
+	Message    = "message"
 )
 
 const (
@@ -149,6 +151,10 @@ func (s *Stream) start() {
 								h(tradeUpdate)
 							} else {
 								s.handleError(err)
+							}
+						case Status:
+							if msgMap[Status] != "success" {
+								log.Printf("WARNING: status=%q: %v", msgMap[Status], msgMap[Message])
 							}
 						default:
 							log.Printf("WARNING: unhandled stream message: %#v", msg)
