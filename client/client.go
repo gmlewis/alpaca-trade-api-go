@@ -31,7 +31,8 @@ const (
 type Client struct {
 	AClient *alpaca.Client
 	PClient *polygon.Client
-	Stream  *polygon.Stream
+	AStream *alpaca.Stream
+	PStream *polygon.Stream
 }
 
 // New returns a new Client.
@@ -67,22 +68,31 @@ func New() (*Client, error) {
 	aClient := alpaca.NewClient(common.Credentials())
 	pClient := polygon.NewClient(common.Credentials())
 
-	stream := polygon.GetStream()
+	aStream := alpaca.GetStream()
+	pStream := polygon.GetStream()
 
 	return &Client{
 		AClient: aClient,
 		PClient: pClient,
-		Stream:  stream,
+		AStream: aStream,
+		PStream: pStream,
 	}, nil
 }
 
 // Close closes the stream connection.
 func (c *Client) Close() error {
-	if c.Stream != nil {
-		if err := c.Stream.Close(); err != nil {
+	if c.AStream != nil {
+		if err := c.AStream.Close(); err != nil {
 			return err
 		}
-		c.Stream = nil
+		c.AStream = nil
+	}
+
+	if c.PStream != nil {
+		if err := c.PStream.Close(); err != nil {
+			return err
+		}
+		c.PStream = nil
 	}
 
 	return nil

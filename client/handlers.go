@@ -20,7 +20,7 @@ func (c *Client) NewAccountHandler(handler api.AccountHandler) error {
 		handler(account)
 	}
 
-	if err := c.Stream.Subscribe(alpaca.AccountUpdates, f); err != nil {
+	if err := c.AStream.Subscribe(alpaca.AccountUpdates, f); err != nil {
 		return fmt.Errorf("NewAccountHandler: %v", err)
 	}
 
@@ -38,7 +38,7 @@ func (c *Client) NewOrderHandler(handler api.OrderHandler) error {
 		handler(order)
 	}
 
-	if err := c.Stream.Subscribe(alpaca.TradeUpdates, f); err != nil {
+	if err := c.AStream.Subscribe(alpaca.TradeUpdates, f); err != nil {
 		return fmt.Errorf("NewOrderHandler: %v", err)
 	}
 
@@ -56,7 +56,7 @@ func (c *Client) NewQuoteHandler(symbol string, handler api.QuoteHandler) error 
 		handler(quote)
 	}
 
-	if err := c.Stream.Subscribe("Q."+symbol, f); err != nil {
+	if err := c.PStream.Subscribe("Q."+symbol, f); err != nil {
 		return fmt.Errorf("NewQuoteHandler(%q): %v", symbol, err)
 	}
 
@@ -74,7 +74,7 @@ func (c *Client) NewTradeHandler(symbol string, handler api.TradeHandler) error 
 		handler(trade)
 	}
 
-	if err := c.Stream.Subscribe("T."+symbol, f); err != nil {
+	if err := c.PStream.Subscribe("T."+symbol, f); err != nil {
 		return fmt.Errorf("NewTradeHandler(%q): %v", symbol, err)
 	}
 
@@ -92,7 +92,7 @@ func (c *Client) NewMinuteBarHandler(symbol string, handler api.MinuteBarHandler
 		handler(minuteBar)
 	}
 
-	if err := c.Stream.Subscribe("AM."+symbol, f); err != nil {
+	if err := c.PStream.Subscribe("AM."+symbol, f); err != nil {
 		return fmt.Errorf("NewMinuteBarHandler(%q): %v", symbol, err)
 	}
 
@@ -110,7 +110,7 @@ func (c *Client) NewSecondBarHandler(symbol string, handler api.SecondBarHandler
 		handler(secondBar)
 	}
 
-	if err := c.Stream.Subscribe("A."+symbol, f); err != nil {
+	if err := c.PStream.Subscribe("A."+symbol, f); err != nil {
 		return fmt.Errorf("NewSecondBarHandler(%q): %v", symbol, err)
 	}
 
