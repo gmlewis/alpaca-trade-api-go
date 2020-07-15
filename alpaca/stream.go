@@ -140,10 +140,12 @@ func (s *Stream) start() {
 				msgBytes, _ := jsoniter.Marshal(msg.Data)
 				switch {
 				case msg.Stream == AccountUpdates:
+					log.Printf("body:%s", msgBytes)
 					var accountupdate AccountUpdate
 					jsoniter.Unmarshal(msgBytes, &accountupdate)
 					handler(accountupdate)
 				case msg.Stream == TradeUpdates:
+					log.Printf("body:%s", msgBytes)
 					var tradeupdate TradeUpdate
 					jsoniter.Unmarshal(msgBytes, &tradeupdate)
 					handler(tradeupdate)

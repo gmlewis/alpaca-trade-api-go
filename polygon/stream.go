@@ -159,6 +159,10 @@ func (s *Stream) start() {
 						default:
 							log.Printf("WARNING: unhandled stream message: %#v", msg)
 						}
+					} else if msgMap["ev"] == Status {
+						if msgMap[Status] != "success" {
+							log.Printf("WARNING: status=%q: %v", msgMap[Status], msgMap[Message])
+						}
 					} else {
 						log.Printf("WARNING: unhandled stream message: %#v", msg)
 					}
