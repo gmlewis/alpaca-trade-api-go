@@ -432,7 +432,7 @@ func (s *AlpacaTestSuite) TestAlpaca() {
 	{
 		// successful
 		do = func(c *Client, req *http.Request) (*http.Response, error) {
-			return &http.Response{}, nil
+			return &http.Response{Body: http.NoBody}, nil
 		}
 
 		assert.Nil(s.T(), CancelOrder("some_order_id"))
@@ -574,6 +574,7 @@ func (s *AlpacaTestSuite) TestAlpaca() {
 		// 200
 		resp := &http.Response{
 			StatusCode: http.StatusOK,
+			Body:       http.NoBody,
 		}
 
 		assert.Nil(s.T(), verify(resp))

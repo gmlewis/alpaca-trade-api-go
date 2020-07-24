@@ -2,6 +2,7 @@ package alpaca
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -869,21 +870,25 @@ func (bar *Bar) GetTime() time.Time {
 }
 
 func verify(resp *http.Response) (err error) {
+	if resp == nil || resp.Body == nil {
+		return errors.New("no response")
+	}
+
+	defer resp.Body.Close()
+
+	var body []byte
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	// I've noticed that the Go struct definitions aren't always consistent
+	// with the actual JSON response received, and data is sometimes lost.
+	// Printing the actual response helps to find the mismatches.
+	log.Printf("body:%s", body)
+
 	if resp.StatusCode >= http.StatusMultipleChoices {
-		var body []byte
-		defer resp.Body.Close()
-
-		body, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
 		apiErr := APIError{}
-
-		// I've noticed that the Go struct definitions aren't always consistent
-		// with the actual JSON response received, and data is sometimes lost.
-		// Printing the actual response helps to find the mismatches.
-		log.Printf("body:%s", body)
 
 		err = jsoniter.Unmarshal(body, &apiErr)
 		if err == nil {
@@ -891,7 +896,7 @@ func verify(resp *http.Response) (err error) {
 		}
 	}
 
-	return
+	return err
 }
 
 func unmarshal(resp *http.Response, data interface{}) error {
