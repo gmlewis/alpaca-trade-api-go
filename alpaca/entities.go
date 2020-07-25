@@ -433,6 +433,10 @@ type TradeUpdate struct {
 	// This field is only populated for event types of "fill" and "partial_fill".
 	PositionQty decimal.Decimal `json:"position_qty"`
 
+	// Qty is the size this fill event, in shares.
+	// This field is only populated for event types of "fill" and "partial_fill".
+	Qty decimal.Decimal `json:"qty"`
+
 	// Order is the order that was updated.
 	Order Order `json:"order"`
 }
