@@ -887,6 +887,11 @@ func verify(resp *http.Response) (err error) {
 	// Printing the actual response helps to find the mismatches.
 	log.Printf("body:%s", body)
 
+	if err := resp.Body.Close(); err != nil {
+		return err
+	}
+	resp.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+
 	if resp.StatusCode >= http.StatusMultipleChoices {
 		apiErr := APIError{}
 
