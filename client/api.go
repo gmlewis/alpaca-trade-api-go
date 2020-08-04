@@ -50,8 +50,8 @@ func (c *Client) GetClock() (*alpaca.Clock, error) {
 func (c *Client) GetCalendar(start, end *string) ([]alpaca.CalendarDay, error) {
 	return c.AClient.GetCalendar(start, end)
 }
-func (c *Client) ListOrders(status *string, until *time.Time, limit *int, nested *bool) ([]alpaca.Order, error) {
-	return c.AClient.ListOrders(status, until, limit, nested)
+func (c *Client) ListOrders(opts alpaca.ListOrdersOptions) ([]alpaca.Order, error) {
+	return c.AClient.ListOrders(opts)
 }
 func (c *Client) PlaceOrder(req alpaca.PlaceOrderRequest) (*alpaca.Order, error) {
 	return c.AClient.PlaceOrder(req)

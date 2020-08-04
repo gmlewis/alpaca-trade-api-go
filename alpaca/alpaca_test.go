@@ -346,7 +346,12 @@ func (s *AlpacaTestSuite) TestAlpaca() {
 		until := time.Now()
 		limit := 1
 
-		orders, err := ListOrders(&status, &until, &limit, nil)
+		opts := ListOrdersOptions{
+			status: &status,
+			until:  &until,
+			limit:  &limit,
+		}
+		orders, err := ListOrders(opts)
 		assert.Nil(s.T(), err)
 		require.Len(s.T(), orders, 1)
 		assert.Equal(s.T(), "some_id", orders[0].ID)
@@ -356,7 +361,7 @@ func (s *AlpacaTestSuite) TestAlpaca() {
 			return &http.Response{}, fmt.Errorf("fail")
 		}
 
-		orders, err = ListOrders(&status, &until, &limit, nil)
+		orders, err = ListOrders(opts)
 		assert.NotNil(s.T(), err)
 		assert.Nil(s.T(), orders)
 	}

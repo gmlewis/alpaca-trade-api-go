@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/gmlewis/alpaca-trade-api-go/alpaca"
 	"github.com/gmlewis/alpaca-trade-api-go/client"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -19,7 +20,7 @@ func main() {
 	}
 	defer c.Close()
 
-	orders, err := c.ListOrders(nil, nil, nil, nil)
+	orders, err := c.ListOrders(alpaca.ListOrdersOptions{})
 	if err != nil {
 		log.Fatalf("ListOrders: %v", err)
 	}

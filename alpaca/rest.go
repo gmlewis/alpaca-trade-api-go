@@ -457,12 +457,31 @@ func (c *Client) GetCalendar(start, end *string) ([]CalendarDay, error) {
 	return calendar, nil
 }
 
+// ListOrdersOptions represents the options used with the ListOrders call.
+type ListOrdersOptions struct {
+	// status is the order status to be queried: "open", "closed" or "all". \
+	// Defaults to "open".
+	status *string
+	// limit is the maximum number of orders in response.
+	// Defaults to 50 and max is 500.
+	limit *int
+	// after will include only ones submitted after this timestamp (exclusive.)
+	after *time.Time
+	// until will include only ones submitted until this timestamp (exclusive.)
+	until *time.Time
+	// direction is the chronological order of response based on the submission time: "asc" or "desc".
+	// Defaults to "desc".
+	direction *string
+	// nested, if true, will roll up multi-leg orders under the legs field of primary order.
+	nested *bool
+}
+
 // ListOrders returns the list of orders for an account,
 // filtered by the input parameters.
-func (c *Client) ListOrders(status *string, until *time.Time, limit *int, nested *bool) ([]Order, error) {
+func (c *Client) ListOrders(opts ListOrdersOptions) ([]Order, error) {
 	urlString := fmt.Sprintf("%s/%s/orders", base, apiVersion)
-	if nested != nil {
-		urlString += fmt.Sprintf("?nested=%v", *nested)
+	if opts.nested != nil {
+		urlString += fmt.Sprintf("?nested=%v", *opts.nested)
 	}
 	u, err := url.Parse(urlString)
 	if err != nil {
@@ -471,16 +490,24 @@ func (c *Client) ListOrders(status *string, until *time.Time, limit *int, nested
 
 	q := u.Query()
 
-	if status != nil {
-		q.Set("status", *status)
+	if opts.status != nil {
+		q.Set("status", *opts.status)
 	}
 
-	if until != nil {
-		q.Set("until", until.Format(time.RFC3339))
+	if opts.after != nil {
+		q.Set("after", opts.after.Format(time.RFC3339))
 	}
 
-	if limit != nil {
-		q.Set("limit", strconv.FormatInt(int64(*limit), 10))
+	if opts.until != nil {
+		q.Set("until", opts.until.Format(time.RFC3339))
+	}
+
+	if opts.limit != nil {
+		q.Set("limit", strconv.FormatInt(int64(*opts.limit), 10))
+	}
+
+	if opts.direction != nil {
+		q.Set("direction", *opts.direction)
 	}
 
 	u.RawQuery = q.Encode()
@@ -765,8 +792,8 @@ func GetCalendar(start, end *string) ([]CalendarDay, error) {
 // ListOrders returns the list of orders for an account,
 // filtered by the input parameters using the default
 // Alpaca client.
-func ListOrders(status *string, until *time.Time, limit *int, nested *bool) ([]Order, error) {
-	return DefaultClient.ListOrders(status, until, limit, nested)
+func ListOrders(opts ListOrdersOptions) ([]Order, error) {
+	return DefaultClient.ListOrders(opts)
 }
 
 // PlaceOrder submits an order request to buy or sell an asset
