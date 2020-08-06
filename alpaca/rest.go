@@ -912,7 +912,7 @@ func verify(resp *http.Response) (err error) {
 	// I've noticed that the Go struct definitions aren't always consistent
 	// with the actual JSON response received, and data is sometimes lost.
 	// Printing the actual response helps to find the mismatches.
-	log.Printf("body:%s", body)
+	log.Printf("statusCode=%v body:%s", resp.StatusCode, body)
 
 	if err := resp.Body.Close(); err != nil {
 		return err
@@ -942,7 +942,7 @@ func unmarshal(resp *http.Response, data interface{}) error {
 	// I've noticed that the Go struct definitions aren't always consistent
 	// with the actual JSON response received, and data is sometimes lost.
 	// Printing the actual response helps to find the mismatches.
-	log.Printf("body:%s", body)
+	log.Printf("statusCode=%v body:%s", resp.StatusCode, body)
 
 	return jsoniter.Unmarshal(body, data)
 }
